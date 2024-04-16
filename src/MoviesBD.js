@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { StarIcon } from "@heroicons/react/24/solid";
 import { Modal } from "./components/Modal";
 import { Input } from "./components/Input";
+import Card from "./components/Card";
+import Preview from "./components/Preview";
 
 function MoviesDB() {
 	const [movies, setMovies] = useState([
@@ -45,6 +46,14 @@ function MoviesDB() {
 	});
 
 	let [isOpen, setIsOpen] = useState(false);
+	let [isPreviewOpen, setPreviewOpen] = useState(false);
+	let [movieId, setMovieId] = useState(null);
+
+
+
+
+
+
 
 	function closeModal() {
 		setIsOpen(false);
@@ -52,6 +61,16 @@ function MoviesDB() {
 
 	function openModal() {
 		setIsOpen(true);
+	}
+
+	function openPreviewModal(id) {
+		setPreviewOpen(true);
+		setMovieId(id)
+	}
+
+
+	function closePreviewModal() {
+		setPreviewOpen(false);
 	}
 
 	const handleChange = (event) => {
@@ -80,23 +99,18 @@ function MoviesDB() {
 	const handleSubmit = () => {
 		setMovies((prevMovies) => [...prevMovies, newMovie]);
 		alert("Movie saved successfully");
-		// setNewMovie({
-		// 	name: "",
-		// 	img: "",
-		// 	year: "",
-		// 	rating: 0,
-		// });
 		closeModal();
 	};
 
-	console.log(newMovie);
+
+	console.log(movieId, "movies id")
 
 	return (
 		<div className="pt-10 pb-20">
 			<h1 className="text-3xl font-extrabold text-center">Most Popular</h1>
 			<p className="text-lg pt-2 text-center">My movies database</p>
 
-			<div className="fixed inset-0 flex items-center justify-center">
+			<div className=" inset-0 flex items-center justify-center">
 				<button
 					type="button"
 					onClick={openModal}
@@ -116,45 +130,17 @@ function MoviesDB() {
 			<div className="pt-10">
 				{searchResult.length > 0 ? (
 					<div className="grid grid-cols-3 h-auto  gap-10">
-						{searchResult.map(({ name, img, rating, year }) => (
-							<div className="">
-								<div className="w-[200px] h-[250px] ">
-									<img className="w-full h-full object-cover" src={img} />
-								</div>
-
-								<div className="pt-3">
-									<p className="text-2xl font-bold">{name}</p>
-									<div className="flex items-center gap-4 py-2 ">
-										<p className="text-base font-semibold">{year}</p>
-										<div className="w-3 h-3 rounded-full bg-gray-500" />
-										<div className="flex items-center gap-1">
-											<StarIcon className="w-4 h-4 text-yellow-500" />
-											<p className="text-base font-medium">{rating}</p>
-										</div>
-									</div>
-								</div>
+						{searchResult.map(({ name, img, rating, year }, i) => (
+							<div key={i}>
+								<Card id={i} title={name} img={img} rating={rating} year={year} openPreviewModal={openPreviewModal} />
 							</div>
 						))}
 					</div>
 				) : movies.length > 0 ? (
 					<div className="grid grid-cols-3 h-auto  gap-10">
-						{movies.map(({ name, img, rating, year }) => (
-							<div className="">
-								<div className="w-[200px] h-[250px] ">
-									<img className="w-full h-full object-cover" src={img} />
-								</div>
-
-								<div className="pt-3">
-									<p className="text-2xl font-bold">{name}</p>
-									<div className="flex items-center gap-4 py-2 ">
-										<p className="text-base font-semibold">{year}</p>
-										<div className="w-3 h-3 rounded-full bg-gray-500" />
-										<div className="flex items-center gap-1">
-											<StarIcon className="w-4 h-4 text-yellow-500" />
-											<p className="text-base font-medium">{rating}</p>
-										</div>
-									</div>
-								</div>
+						{movies.map(({ name, img, rating, year }, i) => (
+							<div key={i}>
+								<Card id={i} title={name} img={img} rating={rating} year={year} openPreviewModal={openPreviewModal} />
 							</div>
 						))}
 					</div>
@@ -220,6 +206,9 @@ function MoviesDB() {
 					</div>
 				</div>
 			</Modal>
+
+
+			<Preview  isOpen={isPreviewOpen} closeModal={closePreviewModal} movie={movies[movieId]}  />
 		</div>
 	);
 }
